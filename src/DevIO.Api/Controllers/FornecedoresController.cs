@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
-using DevIO.Api.Controllers;
 using DevIO.Api.Extensions;
 using DevIO.Api.ViewModels;
 using DevIO.Business.Intefaces;
 using DevIO.Business.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DevIO.Api.Controllers
@@ -24,13 +21,20 @@ namespace DevIO.Api.Controllers
         private readonly IFornecedorService _fornecedorService;
         private readonly IMapper _mapper;
 
-        public FornecedoresController(IFornecedorRepository fornecedorRepository, IMapper mapper, IFornecedorService fornecedorService, INotificador notificador, IEnderecoRepository enderecoRepository = null) : base(notificador)
+        public FornecedoresController(
+            IFornecedorRepository fornecedorRepository,
+            IMapper mapper,
+            IFornecedorService fornecedorService,
+            INotificador notificador,
+            IEnderecoRepository enderecoRepository = null
+        ) : base(notificador)
         {
             _fornecedorRepository = fornecedorRepository;
             _mapper = mapper;
             _fornecedorService = fornecedorService;
             _enderecoRepository = enderecoRepository;
         }
+
         [HttpGet]
         public async Task<IEnumerable<FornecedorViewModel>> ObterTodos()
         {
@@ -38,6 +42,7 @@ namespace DevIO.Api.Controllers
 
             return fornecedor;
         }
+
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<FornecedorViewModel>> ObterPorId(Guid id)
         {
@@ -47,7 +52,8 @@ namespace DevIO.Api.Controllers
 
             return fornecedor;
         }
-        [ClaimsAuthorize("Fornecedor","Adicionar")]
+
+        [ClaimsAuthorize("Fornecedor", "Adicionar")]
         [HttpPost]
         public async Task<ActionResult<FornecedorViewModel>> Adicionar(FornecedorViewModel fornecedorViewModel)
         {
@@ -61,7 +67,10 @@ namespace DevIO.Api.Controllers
 
         [ClaimsAuthorize("Fornecedor", "Atualizar")]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<FornecedorViewModel>> Atualizar(Guid id, FornecedorViewModel fornecedorViewModel)
+        public async Task<ActionResult<FornecedorViewModel>> Atualizar(
+            Guid id,
+            FornecedorViewModel fornecedorViewModel
+        )
         {
             if (id != fornecedorViewModel.Id)
             {
@@ -76,12 +85,10 @@ namespace DevIO.Api.Controllers
 
             await _fornecedorService.Atualizar(fornecedor);
 
-
             return CustomResponse(fornecedorViewModel);
-
         }
-        [ClaimsAuthorize("Fornecedor", "Excluir")]
 
+        [ClaimsAuthorize("Fornecedor", "Excluir")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<FornecedorViewModel>> Excluir(Guid id)
         {
@@ -102,7 +109,10 @@ namespace DevIO.Api.Controllers
 
         [ClaimsAuthorize("Fornecedor", "Atualizar")]
         [HttpPut("atualizar-endereco/{id:guid}")]
-        public async Task<ActionResult<FornecedorViewModel>> AtualizarEndereco(Guid id, EnderecoViewModel enderecoViewModel)
+        public async Task<ActionResult<FornecedorViewModel>> AtualizarEndereco(
+            Guid id,
+            EnderecoViewModel enderecoViewModel
+        )
         {
             if (id != enderecoViewModel.Id)
             {
@@ -115,15 +125,14 @@ namespace DevIO.Api.Controllers
 
             await _fornecedorService.AtualizarEndereco(_mapper.Map<Endereco>(enderecoViewModel));
 
-
             return CustomResponse(enderecoViewModel);
-
         }
 
         private async Task<FornecedorViewModel> ObterFornecedorProdutosEndereco(Guid id)
         {
             return _mapper.Map<FornecedorViewModel>(await _fornecedorRepository.ObterFornecedorProdutosEndereco(id));
         }
+
         private async Task<FornecedorViewModel> ObterFornecedorEndereco(Guid id)
         {
             return _mapper.Map<FornecedorViewModel>(await _fornecedorRepository.ObterFornecedorEndereco(id));

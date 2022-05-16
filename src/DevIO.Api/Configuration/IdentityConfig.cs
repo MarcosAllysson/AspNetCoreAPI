@@ -12,7 +12,10 @@ namespace DevIO.Api.Configuration
 {
     public static class IdentityConfig
     {
-        public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddIdentityConfiguration(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {

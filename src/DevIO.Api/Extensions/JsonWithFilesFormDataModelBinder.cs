@@ -15,7 +15,10 @@ namespace DevIO.Api.Extensions
         private readonly IOptions<MvcNewtonsoftJsonOptions> _jsonOptions;
         private readonly FormFileModelBinder _formFileModelBinder;
 
-        public JsonWithFilesFormDataModelBinder(IOptions<MvcNewtonsoftJsonOptions> jsonOptions, ILoggerFactory loggerFactory)
+        public JsonWithFilesFormDataModelBinder(
+            IOptions<MvcNewtonsoftJsonOptions> jsonOptions,
+            ILoggerFactory loggerFactory
+        )
         {
             _jsonOptions = jsonOptions;
             _formFileModelBinder = new FormFileModelBinder(loggerFactory);
@@ -28,11 +31,13 @@ namespace DevIO.Api.Extensions
 
             // Retrieve the form part containing the JSON
             var valueResult = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
+
             if (valueResult == ValueProviderResult.None)
             {
                 // The JSON was not found
                 var message = bindingContext.ModelMetadata.ModelBindingMessageProvider.MissingBindRequiredValueAccessor(bindingContext.FieldName);
                 bindingContext.ModelState.TryAddModelError(bindingContext.ModelName, message);
+
                 return;
             }
 
@@ -50,7 +55,9 @@ namespace DevIO.Api.Extensions
                 var fieldName = property.BinderModelName ?? property.PropertyName;
                 var modelName = fieldName;
                 var propertyModel = property.PropertyGetter(bindingContext.Model);
+
                 ModelBindingResult propertyResult;
+
                 using (bindingContext.EnterNestedScope(property, fieldName, modelName, propertyModel))
                 {
                     await _formFileModelBinder.BindModelAsync(bindingContext);

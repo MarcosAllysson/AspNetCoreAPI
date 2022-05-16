@@ -22,12 +22,18 @@ namespace DevIO.Api.Controllers
         private readonly AppSettings _appSettings;
 
 
-        public AuthController(INotificador notificador, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IOptions<AppSettings> appSettings) : base(notificador)
+        public AuthController(
+            INotificador notificador,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            IOptions<AppSettings> appSettings
+        ) : base(notificador)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
         }
+
         [HttpPost("nova-conta")]
         public async Task<ActionResult> Registrar(RegisterUserViewModel registerUser)
         {
@@ -47,6 +53,7 @@ namespace DevIO.Api.Controllers
                 await _signInManager.SignInAsync(user, false);
                 return CustomResponse(await GerarJwt(registerUser.Email));
             }
+
             foreach (var error in result.Errors)
             {
                 NotificarErro(error.Description);
@@ -60,12 +67,18 @@ namespace DevIO.Api.Controllers
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            var result = await _signInManager.PasswordSignInAsync(loginUserViewModel.Email, loginUserViewModel.Password, false, true);
+            var result = await _signInManager.PasswordSignInAsync(
+                loginUserViewModel.Email,
+                loginUserViewModel.Password,
+                false,
+                true
+            );
 
             if (result.Succeeded)
             {
                 return CustomResponse(await GerarJwt(loginUserViewModel.Email));
             }
+
             if (result.IsLockedOut)
             {
                 NotificarErro("Usuário temporariamente bloqueado por tentativas inválidas");
@@ -87,6 +100,7 @@ namespace DevIO.Api.Controllers
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
+
             foreach (var userRole in userRoles)
             {
                 claims.Add(new Claim("role", userRole));
@@ -105,8 +119,6 @@ namespace DevIO.Api.Controllers
                 Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
-
-
 
             var encodedToken = tokenHandler.WriteToken(token);
 

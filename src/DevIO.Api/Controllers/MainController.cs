@@ -9,6 +9,12 @@ namespace DevIO.Api.Controllers
     [ApiController]
     public abstract class MainController : ControllerBase
     {
+        /*
+            Validação de:
+            - Notificações de erro
+            - Model state
+            - Operação de negócios
+        */
         private readonly INotificador _notificador;
 
         public MainController(INotificador notificador)
@@ -20,6 +26,7 @@ namespace DevIO.Api.Controllers
         {
             return !_notificador.TemNotificacao();
         }
+
         protected ActionResult CustomResponse(object result = null)
         {
             if (OperacaoValida())
@@ -31,6 +38,7 @@ namespace DevIO.Api.Controllers
 
                 });
             }
+
             return BadRequest(new
             {
                 success = false,
@@ -60,6 +68,4 @@ namespace DevIO.Api.Controllers
             _notificador.Handle(new Notificacao(mensagem));
         }
     }
-
-
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DevIO.Api.ViewModels
 {
@@ -11,7 +8,7 @@ namespace DevIO.Api.ViewModels
         [Key]
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage ="O campo {0} é obrigatório")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Guid FornecedorId { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]

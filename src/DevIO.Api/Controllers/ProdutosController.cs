@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DevIO.Api.Controllers
@@ -21,7 +20,13 @@ namespace DevIO.Api.Controllers
         private readonly IProdutoRepository _produtoRepository;
         private readonly IProdutoService _produtoService;
         private readonly IMapper _mapper;
-        public ProdutosController(INotificador notificador, IProdutoRepository produtoRepository, IProdutoService produtoService, IMapper mapper) : base(notificador)
+
+        public ProdutosController(
+            INotificador notificador,
+            IProdutoRepository produtoRepository,
+            IProdutoService produtoService,
+            IMapper mapper
+        ) : base(notificador)
         {
             _produtoRepository = produtoRepository;
             _produtoService = produtoService;
@@ -39,8 +44,8 @@ namespace DevIO.Api.Controllers
         {
             var produtoViewModel = await ObterProduto(id);
 
-            if (produtoViewModel == null)
-                return NotFound();
+            if (produtoViewModel == null) return NotFound();
+
             return produtoViewModel;
         }
 
@@ -52,7 +57,7 @@ namespace DevIO.Api.Controllers
 
             var imagemNome = Guid.NewGuid() + "_" + produtoViewModel.Imagem;
 
-            if(!UploadArquivo(produtoViewModel.ImagemUpload, imagemNome))
+            if (!UploadArquivo(produtoViewModel.ImagemUpload, imagemNome))
             {
                 return CustomResponse();
             }
@@ -62,11 +67,11 @@ namespace DevIO.Api.Controllers
             await _produtoService.Adicionar(_mapper.Map<Produto>(produtoViewModel));
 
             return CustomResponse(produtoViewModel);
-        }        
+        }
+
         [HttpPost("Adicionar")]
         [ClaimsAuthorize("Produto", "Adicionar")]
-        //para colocar tamanho limite no request
-        //[RequestSizeLimit(40000000)]
+        //[RequestSizeLimit(40000000)] //para colocar tamanho limite no request
         public async Task<ActionResult<ProdutoViewModel>> AdicionarAlternativo(ProdutoImagemViewModel produtoViewModel)
         {
             if (!ModelState.IsValid)
@@ -74,12 +79,13 @@ namespace DevIO.Api.Controllers
 
             var imgprefixo = Guid.NewGuid() + "_";
 
-            if(!await UploadArquivoAlternativo(produtoViewModel.ImagemUpload, imgprefixo))
+            if (!await UploadArquivoAlternativo(produtoViewModel.ImagemUpload, imgprefixo))
             {
                 return CustomResponse();
             }
 
             produtoViewModel.Imagem = imgprefixo + produtoViewModel.ImagemUpload.FileName;
+
             var produto = _mapper.Map<Produto>(produtoViewModel);
             await _produtoService.Adicionar(produto);
 
@@ -111,7 +117,7 @@ namespace DevIO.Api.Controllers
                 }
 
                 produtoAtualizacao.Imagem = imagemNome;
-             }
+            }
 
             produtoAtualizacao.Nome = produtoViewModel.Nome;
             produtoAtualizacao.Descricao = produtoViewModel.Descricao;
@@ -120,9 +126,9 @@ namespace DevIO.Api.Controllers
 
             await _produtoService.Atualizar(_mapper.Map<Produto>(produtoAtualizacao));
 
-
             return CustomResponse(produtoAtualizacao);
         }
+
         [ClaimsAuthorize("Produto", "Excluir")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<ProdutoViewModel>> Excluir(Guid id)
@@ -139,13 +145,14 @@ namespace DevIO.Api.Controllers
 
         private async Task<ProdutoViewModel> ObterProduto(Guid id)
         {
-            return  _mapper.Map<ProdutoViewModel>(await _produtoRepository.ObterProdutoFornecedor(id));
+            return _mapper.Map<ProdutoViewModel>(await _produtoRepository.ObterProdutoFornecedor(id));
         }
+
         private bool UploadArquivo(string arquivo, string imgNome)
         {
             var imageDataByteArray = Convert.FromBase64String(arquivo);
 
-            if(string.IsNullOrEmpty(arquivo))
+            if (string.IsNullOrEmpty(arquivo))
             {
                 NotificarErro("Forneça uma imagem para este produto!");
                 return false;
@@ -158,6 +165,7 @@ namespace DevIO.Api.Controllers
                 NotificarErro("Já existe um arquivo com este nome!");
                 return false;
             }
+
             System.IO.File.WriteAllBytes(filePath, imageDataByteArray);
 
             return true;
@@ -165,7 +173,7 @@ namespace DevIO.Api.Controllers
 
         private async Task<bool> UploadArquivoAlternativo(IFormFile arquivo, string imgPrefixo)
         {
-            if(arquivo == null || arquivo.Length == 0)
+            if (arquivo == null || arquivo.Length == 0)
             {
                 NotificarErro("Forneça uma imagem para este produto!");
                 return false;

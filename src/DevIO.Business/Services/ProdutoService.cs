@@ -10,8 +10,10 @@ namespace DevIO.Business.Services
     {
         private readonly IProdutoRepository _produtoRepository;
 
-        public ProdutoService(IProdutoRepository produtoRepository,
-                              INotificador notificador) : base(notificador)
+        public ProdutoService(
+            IProdutoRepository produtoRepository,
+            INotificador notificador
+        ) : base(notificador)
         {
             _produtoRepository = produtoRepository;
         }
