@@ -50,6 +50,7 @@ namespace DevIO.Api.Controllers
         {
             if (!modelState.IsValid)
                 NotificarErroModelInvalida(modelState);
+
             return CustomResponse();
         }
 

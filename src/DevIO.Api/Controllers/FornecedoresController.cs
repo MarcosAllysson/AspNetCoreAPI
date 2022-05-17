@@ -60,7 +60,9 @@ namespace DevIO.Api.Controllers
             if (!ModelState.IsValid)
                 return CustomResponse(ModelState);
 
-            var result = await _fornecedorService.Adicionar(_mapper.Map<Fornecedor>(fornecedorViewModel));
+            var result = await _fornecedorService.Adicionar(
+                _mapper.Map<Fornecedor>(fornecedorViewModel)
+            );
 
             return CustomResponse(fornecedorViewModel);
         }
