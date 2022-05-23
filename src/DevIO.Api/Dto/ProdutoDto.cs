@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DevIO.Api.ViewModels
 {
-    public class ProdutoViewModel
+    public class ProdutoDto
     {
         [Key]
         public Guid Id { get; set; }

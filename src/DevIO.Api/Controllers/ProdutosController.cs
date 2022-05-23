@@ -34,13 +34,13 @@ namespace DevIO.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ProdutoViewModel>> ObterTodos()
+        public async Task<IEnumerable<ProdutoDto>> ObterTodos()
         {
-            return _mapper.Map<IEnumerable<ProdutoViewModel>>(await _produtoRepository.ObterProdutosFornecedores());
+            return _mapper.Map<IEnumerable<ProdutoDto>>(await _produtoRepository.ObterProdutosFornecedores());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProdutoViewModel>> ObterPorId(Guid id)
+        public async Task<ActionResult<ProdutoDto>> ObterPorId(Guid id)
         {
             var produtoViewModel = await ObterProduto(id);
 
@@ -50,7 +50,7 @@ namespace DevIO.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProdutoViewModel>> Adicionar(ProdutoViewModel produtoViewModel)
+        public async Task<ActionResult<ProdutoDto>> Adicionar(ProdutoDto produtoViewModel)
         {
             if (!ModelState.IsValid)
                 return CustomResponse(ModelState);
@@ -72,7 +72,7 @@ namespace DevIO.Api.Controllers
         [HttpPost("Adicionar")]
         [ClaimsAuthorize("Produto", "Adicionar")]
         //[RequestSizeLimit(40000000)] //para colocar tamanho limite no request
-        public async Task<ActionResult<ProdutoViewModel>> AdicionarAlternativo(ProdutoImagemViewModel produtoViewModel)
+        public async Task<ActionResult<ProdutoDto>> AdicionarAlternativo(ProdutoImagemDto produtoViewModel)
         {
             if (!ModelState.IsValid)
                 return CustomResponse(ModelState);
@@ -94,7 +94,7 @@ namespace DevIO.Api.Controllers
 
         [ClaimsAuthorize("Produto", "Atualizar")]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Atualizar(Guid id, ProdutoViewModel produtoViewModel)
+        public async Task<IActionResult> Atualizar(Guid id, ProdutoDto produtoViewModel)
         {
             if (id != produtoViewModel.Id)
             {
@@ -131,7 +131,7 @@ namespace DevIO.Api.Controllers
 
         [ClaimsAuthorize("Produto", "Excluir")]
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult<ProdutoViewModel>> Excluir(Guid id)
+        public async Task<ActionResult<ProdutoDto>> Excluir(Guid id)
         {
             var produto = await ObterProduto(id);
 
@@ -143,9 +143,9 @@ namespace DevIO.Api.Controllers
             return CustomResponse(produto);
         }
 
-        private async Task<ProdutoViewModel> ObterProduto(Guid id)
+        private async Task<ProdutoDto> ObterProduto(Guid id)
         {
-            return _mapper.Map<ProdutoViewModel>(await _produtoRepository.ObterProdutoFornecedor(id));
+            return _mapper.Map<ProdutoDto>(await _produtoRepository.ObterProdutoFornecedor(id));
         }
 
         private bool UploadArquivo(string arquivo, string imgNome)

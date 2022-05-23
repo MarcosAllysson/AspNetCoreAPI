@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DevIO.Api.ViewModels
 {
-    public class FornecedorViewModel
+    public class FornecedorDto
     {
         [Key]
         public Guid Id { get; set; }
@@ -18,10 +18,10 @@ namespace DevIO.Api.ViewModels
         public string Documento { get; set; }
 
         public int TipoFornecedor { get; set; }
-        public EnderecoViewModel Endereco { get; set; }
+        public EnderecoDto Endereco { get; set; }
 
         public bool Ativo { get; set; }
 
-        public IEnumerable<ProdutoViewModel> Produtos { get; set; }
+        public IEnumerable<ProdutoDto> Produtos { get; set; }
     }
 }

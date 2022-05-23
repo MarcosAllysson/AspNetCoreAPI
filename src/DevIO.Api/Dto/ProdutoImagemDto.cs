@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace DevIO.Api.ViewModels
 {
     [ModelBinder(typeof(JsonWithFilesFormDataModelBinder), Name = "produto")]
-    public class ProdutoImagemViewModel
+    public class ProdutoImagemDto
     {
         [Key]
         public Guid Id { get; set; }

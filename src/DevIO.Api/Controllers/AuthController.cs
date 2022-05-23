@@ -35,7 +35,7 @@ namespace DevIO.Api.Controllers
         }
 
         [HttpPost("nova-conta")]
-        public async Task<ActionResult> Registrar(RegisterUserViewModel registerUser)
+        public async Task<ActionResult> Registrar(RegisterUserDto registerUser)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
